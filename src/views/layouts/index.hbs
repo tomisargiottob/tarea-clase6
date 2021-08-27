@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="stylesheet" href="style.css">
+	<script src="/socket.io/socket.io.js"></script>
+	<title>Pagina HBS</title>
+</head>
+<body>
+	<section class="container">
+		<div class="row justify-content-center pt-4">
+			<div class="col-10">
+				{{{body}}}
+			</div>
+		</div>
+	</section>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script>
+		function refreshTable(productos){
+			if (productos.length > 0){
+				const element = document.getElementById("sin-productos");
+				element.classList.add('hide')
+				const element2 = document.getElementById("con-productos");
+				element2.classList.remove('hide')
+			}else{
+				const element = document.getElementById("con-productos");
+				element.classList.add('hide')
+				const element2 = document.getElementById("sin-productos");
+				element2.classList.remove('hide')
+			}
+		}
+		function tableRow(product){
+			const row = `
+				<tr class="row">
+					<td class="col-3 align-self-center">${product.name}</td>
+					<td class="col-3 align-self-center">${product.price}</td>
+					<td class="imagen col-3 align-self-center">
+						<img src="${product.thumbnail}" alt="">
+					</d>
+				</tr>
+			`
+			const table = document.getElementById("con-productos");
+			table.innerHTML = table.innerHTML+row
+		}
+		let productos =[];
+		
+		const socket= io();
+		socket.on('welcomeMessage',(bienvenida) => {
+			productos = bienvenida.productos;
+			refreshTable(productos)
+			productos.forEach((product)=>{
+				tableRow(product)
+			})
+		})
+		socket.on('serverAdd',(product) => {
+			productos.push(product)
+			refreshTable(productos)
+			tableRow(product)
+		})
+		const form = document.getElementById('add_product')
+		form.addEventListener('submit', (event) => {
+			event.preventDefault()
+			const name = document.getElementById('name').value;
+			const price = document.getElementById('price').value;
+			const thumbnail = document.getElementById('thumbnail').value;
+
+			const product ={ name, price, thumbnail };
+			socket.emit('clientAdd',JSON.stringify(product));
+			form.reset()
+		})
+	</script>
+</body>
+</html>
