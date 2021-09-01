@@ -54,7 +54,7 @@
 				<li>
 					<div>
 						From: <span style="font-weight:800;color:blue;">${message.user}</span><br>
-						At: <span style="color:brown;">${new Date(message.time)}</span><br>
+						At: <span style="color:brown;">${new Date(message.time).toUTCString()}</span><br>
 						Message: <span style="font-style:italic;color:green;">${message.text}</span>
 					</div>
 				</li>`
