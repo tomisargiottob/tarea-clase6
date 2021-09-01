@@ -45,6 +45,21 @@
 			const table = document.getElementById("con-productos");
 			table.innerHTML = table.innerHTML+row
 		}
+		function updateChat(messages){
+			const historial = document.getElementById('historialChat');
+			historial.innerHTML=''
+			messages.forEach((message) => {
+				console.log(message)
+				historial.innerHTML+= `
+				<li>
+					<div>
+						From: <span style="font-weight:800;color:blue;">${message.user}</span><br>
+						At: <span style="color:brown;">${new Date(message.time)}</span><br>
+						Message: <span style="font-style:italic;color:green;">${message.text}</span>
+					</div>
+				</li>`
+			})
+		}
 		let productos =[];
 		
 		const socket= io();
@@ -54,11 +69,15 @@
 			productos.forEach((product)=>{
 				tableRow(product)
 			})
+			updateChat(bienvenida.messages)
 		})
 		socket.on('serverAdd',(product) => {
 			productos.push(product)
 			refreshTable(productos)
 			tableRow(product)
+		})
+		socket.on('newMessage',(messages) => {
+			updateChat(messages)
 		})
 		const form = document.getElementById('add_product')
 		form.addEventListener('submit', (event) => {
@@ -70,6 +89,17 @@
 			const product ={ name, price, thumbnail };
 			socket.emit('clientAdd',JSON.stringify(product));
 			form.reset()
+		})
+		const chat = document.getElementById('chat-form')
+		chat.addEventListener('submit', (event) => {
+			event.preventDefault()
+			const user = chat.user.value;
+			const text = chat.text.value;
+			const time = new Date();
+
+			const message ={ user, text, time };
+			socket.emit('message',JSON.stringify(message));
+			chat.reset()
 		})
 	</script>
 </body>

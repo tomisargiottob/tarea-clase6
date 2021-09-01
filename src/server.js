@@ -9,6 +9,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 const { productos, productosRouter } = require('./productos');
+const messages = [];
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -34,13 +35,18 @@ app.use(express.static('public'));
 const bienvenida = {
   saludo: 'hola cliente',
   productos,
-}
+  messages,
+};
 io.on('connection', (socket) => {
   console.log(emoji.get('fire'), 'New websocket connection');
   socket.emit('welcomeMessage', bienvenida);
   socket.on('clientAdd', (product) => {
     productos.push(JSON.parse(product));
     io.sockets.emit('serverAdd', JSON.parse(product));
+  });
+  socket.on('message', (text) => {
+    messages.push(JSON.parse(text));
+    io.sockets.emit('newMessage', messages);
   });
   socket.on('disconnect', () => {
     console.log(emoji.get('wave'), 'Client disconected');
