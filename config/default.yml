@@ -1,2 +1,8 @@
 app:
   port: 3000
+
+db:
+  host: localhost
+  user: tomisar
+  password: tomisar123
+  database: ecommerce
