@@ -6,3 +6,6 @@ db:
   user: tomisar
   password: tomisar123
   database: ecommerce
+
+mongodb:
+  uri: 'mongodb://ecommerce:ecommerce@localhost:27017/ecommerce11'

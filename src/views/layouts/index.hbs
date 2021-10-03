@@ -32,7 +32,7 @@
 				element2.classList.remove('hide')
 			}
 		}
-		function tableRow(product){
+		function tableRow(product, id){
 			const row = `
 				<tr class="row product-data">
 					<td class="col-3 align-self-center">${product.name}</td>
@@ -42,8 +42,10 @@
 					</d>
 				</tr>
 			`
-			const table = document.getElementById("con-productos");
+			const table = document.getElementById(id);
+			console.log(product, row);
 			table.innerHTML = table.innerHTML+row
+			console.log(table.innerHTML);
 		}
 		function updateChat(messages){
 			const historial = document.getElementById('historialChat');
@@ -78,7 +80,7 @@
 					refreshTable(data)
 					if (data.length){
 						data.forEach((product)=>{
-							tableRow(product)
+							tableRow(product, "con-productos-space")
 						})
 					}
 				});
@@ -86,6 +88,17 @@
 				.then(response => response.json())
 				.then(data => {	
 					updateChat(data)
+				});
+
+			fetch('http://localhost:3000/products-test')
+				.then(response => response.json())
+				.then(data => {
+					refreshTable(data)
+					if (data.length){
+						data.forEach((product)=>{
+							tableRow(product, "con-productos-test")
+						})
+					}
 				});
 		})
 		socket.on('serverAdd',(product) => {
@@ -96,7 +109,7 @@
 					refreshTable(data)
 					if (data.length){
 						data.forEach((product)=>{
-							tableRow(product)
+							tableRow(product,"con-productos")
 						})
 					}
 				});

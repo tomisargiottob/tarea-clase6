@@ -1,4 +1,4 @@
-const db = require('../db/mariadb');
+const db = require('../db/sqlite');
 
 class Product {
   constructor() {

@@ -4,11 +4,14 @@ const handlebars = require('express-handlebars');
 const { Server } = require('socket.io');
 const { createServer } = require('http');
 const emoji = require('node-emoji');
+const db = require('./models/db');
+const { normalizado } = require('./controller/normalizacion');
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 const { productosRouter } = require('./controller/productos');
+const { productosTestRouter } = require('./controller/productos-test');
 const { messagesRouter } = require('./controller/mensajes');
 
 app.use(express.json());
@@ -31,7 +34,9 @@ app.get('/', (req, res) => {
   res.render('main', {});
 });
 app.use('/products', productosRouter);
+app.use('/products-test', productosTestRouter);
 app.use('/messages', messagesRouter);
+
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {

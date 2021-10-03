@@ -1,19 +1,17 @@
 const { Router } = require('express');
-const Message = require('../models/mensajes');
-
-const messages = new Message();
+const message = require('../models/mensajes-model');
 
 const messagesRouter = new Router();
 
 messagesRouter.get('', async (req, res) => {
-  const productos = await messages.getAll();
-  res.status(200).send(productos);
+  const mensajes = await message.find();
+  res.status(200).send(mensajes);
 });
 
 messagesRouter.post('', async (req, res) => {
   const { user, text, time } = req.body;
-  const message = { user, text, time };
-  await messages.createMessage(message);
+  const userMessage = { user, text, time };
+  await message.create(userMessage);
   res.status(200).send({ message: 'success' });
 });
 
